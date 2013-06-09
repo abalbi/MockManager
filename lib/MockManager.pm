@@ -1,4 +1,5 @@
 package MockManager;
+use MockObjectX;
 
 our $instancia = bless({},'MockManager');
 
