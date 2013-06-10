@@ -1,5 +1,7 @@
 package MockManager;
+use Data::Dumper;
 use MockObjectX;
+use MockManager::Llamado;
 
 our $instancia = bless({},'MockManager');
 
@@ -14,12 +16,15 @@ sub limpiar {
 sub agregar {
   my $self = $MockManager::instancia;
   shift;
-  my (@llamadas) = @_;
-  push @{$self->{llamadas}}, @llamadas;
+  my (@llamados) = @_;
+  foreach my $args (@llamados) {
+    my $llamado = MockManager::Llamado->new(@{$args});
+    push @{$self->{llamados}}, $llamado;
+  }
 }
 
-sub llamadas {
+sub llamados {
   my $self = $MockManager::instancia;
-  return scalar @{$self->{llamadas}}
+  return $self->{llamados};
 }
 1;

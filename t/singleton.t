@@ -57,8 +57,23 @@ sub cantidad_llamados : Test(1) {
   my $mm = MockManager->instancia;
   my $m1 = MockObjectX->new();
   $mm->agregar([$m1]);
-  my $c = MockManager->llamadas;
+  my $c = scalar @{MockManager->llamados};
   is($c,1); 
+}
+
+#Dado que mm es una instancia de MockManager
+#Y m es una instancia de MockObjectX
+#Y se ejecuto mm->agregar(m)
+#CUANDO ejecutó ll = mm->llamados->[0]
+#ENTONCES ll es una instancia de MockManager::Llamado
+
+sub acceder_a_un_llamado : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m1 = MockObjectX->new();
+  $mm->agregar([$m1]);
+  my $ll = $mm->llamados->[0];
+  isa_ok($ll,'MockManager::Llamado');
 }
 
 1;
