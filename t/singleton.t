@@ -3,7 +3,9 @@ use Data::Dumper;
 use base qw(Test::Class);
 use lib 'lib';
 use MockManager;
+use MockObjectX;
 use Test::More;
+use Test::Exception;
 
 
 sub before : Test(setup)    {

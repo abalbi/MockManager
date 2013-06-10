@@ -1,6 +1,6 @@
-package Test::MockObjectX;
+package MockObjectX;
 {
-  $Test::MockObjectX::VERSION = '1.20120301';
+  $MockObjectX::VERSION = '1.20120301';
 }
 
 use strict;
