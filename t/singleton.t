@@ -8,7 +8,8 @@ use Test::More;
 use Test::Exception;
 
 
-sub before : Test(setup)    {
+sub before : Test(setup) {
+  MockManager->limpiar;
 }; 
 
 #Dado el use de MockManager
@@ -23,7 +24,7 @@ sub singleton : Test(1) {
 #CUANDO ejecuto mm->agregar([m])
 #ENTONCES no recibo ningún error
 
-sub agregar_llamado : Test() {
+sub agregar_llamado : Test(1) {
   my $self = shift;
   my $mm = MockManager->instancia;
   my $m = MockObjectX->new();
@@ -36,12 +37,29 @@ sub agregar_llamado : Test() {
 #ENTONCES no recibo ningún error
 #
 
-sub agregar_llamados : Test() {
+sub agregar_llamados : Test(1) {
   my $self = shift;
   my $mm = MockManager->instancia;
   my $m1 = MockObjectX->new();
   my $m2 = MockObjectX->new();
   lives_ok {$mm->agregar([$m1],[$m2])};
 }
+
+#ado que mm es una instancia de MockManager
+#Y m es una instancia de MockObjectX
+#Y se ejecuto mm->agregar(m)
+#CUANDO ejecutó c = mm->llamados
+#ENTONCES no recibo ningún error
+#Y c es igual a 1
+
+sub cantidad_llamados : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m1 = MockObjectX->new();
+  $mm->agregar([$m1]);
+  my $c = MockManager->llamadas;
+  is($c,1); 
+}
+
 1;
 __PACKAGE__->new->runtests
