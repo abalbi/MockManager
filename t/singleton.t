@@ -128,5 +128,21 @@ sub autoregistrar_mocks : Test(1) {
   is($mm->mocks->{$m1}, $m1);
 }
 
+#DADO que mm es una instancia de MockManager
+#Y m1 es una instancia de MockObjectX
+#Y m2 es una instancia de MockObjectX
+#Y mm->agregar([m1, 'metodo1','retorno1'],[m2, 'metodo2','retorno2'])
+#CUANDO r = m1->metodo1
+#  Y mm->terminar
+#ENTONCES recibo un error 'No se realizaron todas las ejecuciones esperadas'
+
+sub mas_esperados_que_realizados : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m1 = MockObjectX->new();
+  my $m2 = MockObjectX->new();
+  $mm->agregar([$m1,'metodo1','retorno1'], [$m2,'metodo2','retorno2']);
+  throws_ok {$mm->terminar} qr/No se realizaron todas las ejecuciones esperadas/;
+}
 1;
 __PACKAGE__->new->runtests

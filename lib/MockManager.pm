@@ -17,7 +17,8 @@ sub new {
   return bless({
     mocks => {},
     llamados => [],
-    construido => 0
+    construido => 0,
+    cuenta => 0
   },'MockManager');
 }
 
@@ -83,9 +84,15 @@ sub validar_llamada {
   my $mock = shift;
   my $metodo = shift;
   my $retorno = shift;
-  my $llamado = $self->llamados->[0];
+  my $llamado = $self->llamados->[$self->{cuenta}];
   if (not ($llamado->mock eq $mock)) {
     die "Se esperaba el llamado de ".$llamado->mock." -> ".$llamado->metodo." : '".$llamado->retorno."'"; 
   }
+  $self->{cuenta}++;
+}
+
+sub terminar {
+  my $self = $MockManager::instancia;
+  die "No se realizaron todas las ejecuciones esperadas" if $self->{cuenta} != scalar @{$self->llamados};
 }
 1;
