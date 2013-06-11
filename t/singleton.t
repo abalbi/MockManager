@@ -101,5 +101,32 @@ sub crear_llamado_sin_mock : Test(1) {
   throws_ok {MockManager::Llamado->new} qr/No se puede crear un MockManager::Llamado sin un MockObjectX definido/;
 }
 
+# DADO que mm es una instancia de MockManager
+#  Y m1 es una instancia de MockObjectX
+#  Y m2 es una instancia de MockObjectX
+#  Y mm->agregar([m1, 'metodo1','retorno1'],[m2, 'metodo2','retorno2'])
+# CUANDO r = m2->metodo2
+# ENTONCES recibo un error "Se esperaba el llamado de m1->metodo1 : 'retorno1'
+
+sub llamados_en_orden : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m1 = MockObjectX->new();
+  my $m2 = MockObjectX->new();
+  $mm->agregar([$m1,'metodo1','retorno1'], [$m2,'metodo2','retorno2']);
+  throws_ok {$m2->metodo2} qr/Se esperaba el llamado de .+ -> metodo1 : 'retorno1'/;
+}
+
+# DADO que mm es una instancia de MockManager
+# CUANDO m = MockObjectX->new
+# ENTONCES mm->mocks->[0] es igual m
+
+sub autoregistrar_mocks : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m1 = MockObjectX->new();
+  is($mm->mocks->{$m1}, $m1);
+}
+
 1;
 __PACKAGE__->new->runtests

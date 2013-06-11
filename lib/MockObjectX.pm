@@ -5,7 +5,7 @@ package MockObjectX;
 
 use strict;
 use warnings;
-
+use Data::Dumper;
 use Scalar::Util qw( blessed refaddr reftype weaken );
 
 sub import
@@ -25,7 +25,9 @@ sub new
 {
     my ($class, $type) = @_;
     $type ||= {};
-    bless $type, $class;
+    my $self = bless $type, $class;
+    MockManager->registrar_mock($self);
+    return $self;
 }
 
 sub mock
@@ -232,7 +234,9 @@ sub dispatch_mocked_method
     if (exists $subs->{$sub})
     {
         $self->log_call( $sub, @_ );
-        goto &{ $subs->{$sub} };
+        my $return = &{ $subs->{$sub} };
+        MockManager->validar_llamada($self,$sub,$return);
+        return $return;
     }
     else
     {

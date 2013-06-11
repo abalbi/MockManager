@@ -3,14 +3,32 @@ use Data::Dumper;
 use MockObjectX;
 use MockManager::Llamado;
 
-our $instancia = bless({},'MockManager');
+our $instancia = MockManager->new;
 
 sub instancia {
   return $MockManager::instancia;
 }
 
 sub limpiar {
-  $MockManager::instancia = bless({},'MockManager');
+  $MockManager::instancia = MockManager->new;
+}
+
+sub new {
+  return bless({
+    mocks => {},
+    llamados => [],
+    construido => 0
+  },'MockManager');
+}
+
+sub registrar_mock {
+  my $self = $MockManager::instancia;
+  shift;
+  my $mock = shift;
+  if(ref($self->{mocks}) ne 'HASH') {
+    $self->{mocks} = {};
+  }
+  $self->{mocks}->{$mock} = $mock;
 }
 
 sub agregar {
@@ -20,10 +38,7 @@ sub agregar {
   foreach my $args (@llamados) {
     my $llamado = MockManager::Llamado->new(@{$args});
     push @{$self->{llamados}}, $llamado;
-    if(ref($self->{mocks}) ne 'HASH') {
-      $self->{mocks} = {};
-    }
-    $self->{mocks}->{$llamado->mock} = $llamado->mock;
+    $self->registrar_mock($llamado->mock);
   }
 }
 
@@ -60,5 +75,17 @@ sub construir_fixture {
     }
   }
   $self->construido(1);
+}
+
+sub validar_llamada {
+  my $self = $MockManager::instancia;
+  shift;
+  my $mock = shift;
+  my $metodo = shift;
+  my $retorno = shift;
+  my $llamado = $self->llamados->[0];
+  if (not ($llamado->mock eq $mock)) {
+    die "Se esperaba el llamado de ".$llamado->mock." -> ".$llamado->metodo." : '".$llamado->retorno."'"; 
+  }
 }
 1;
