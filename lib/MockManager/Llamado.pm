@@ -3,6 +3,7 @@ sub new {
   my $self = bless({},'MockManager::Llamado');
   shift;
   $self->{mock} = shift;
+  die "No se puede crear un MockManager::Llamado sin un MockObjectX definido" if not $self->{mock};
   $self->{metodo} = shift;
   $self->{retorno} = shift;
   $self->{ejecutado} = 0;

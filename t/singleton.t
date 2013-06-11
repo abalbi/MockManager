@@ -92,5 +92,14 @@ sub agregar_llamado_con_metodo : Test(1){
   is($r,'retorno1');
 }
 
+#DADO el uso de MockManager::Llamado
+#CUANDO MockManager::Llamado->new
+#ENTONCES recibo un error que dice "No se puede crear un MockManager::Llamado sin un MockObjectX definido"
+
+sub crear_llamado_sin_mock : Test(1) {
+  my $self = shift;
+  throws_ok {MockManager::Llamado->new} qr/No se puede crear un MockManager::Llamado sin un MockObjectX definido/;
+}
+
 1;
 __PACKAGE__->new->runtests
