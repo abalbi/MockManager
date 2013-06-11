@@ -225,6 +225,7 @@ sub AUTOLOAD
 sub dispatch_mocked_method
 {
     my $self = $_[0];
+    MockManager->construir_fixture;
     my $sub  = splice( @_, 1, 1 );
 
     my $subs = _subs( $self );

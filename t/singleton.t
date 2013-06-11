@@ -76,5 +76,21 @@ sub acceder_a_un_llamado : Test(1) {
   isa_ok($ll,'MockManager::Llamado');
 }
 
+#Dado que mm es una instancia de MockManager
+#Y m es una instancia de MockObjectX
+#CUANDO ejecuto mm->agregar([m, 'metodo1','retorno1'])
+#Y r = m->retorno1
+#ENTONCES no recibo ningún error
+#Y r es igual a 'retorno1'
+
+sub agregar_llamado_con_metodo : Test(1){
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m1 = MockObjectX->new();
+  $mm->agregar([$m1,'metodo1','retorno1']);
+  my $r = $m1->metodo1;
+  is($r,'retorno1');
+}
+
 1;
 __PACKAGE__->new->runtests
