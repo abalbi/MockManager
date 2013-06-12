@@ -43,7 +43,18 @@ sub agregar {
       push @{$self->{llamados}}, $llamado;
       $self->registrar_mock($llamado->mock);
     } else {
-      
+      my $modulo = $args->[0];
+      my $mock = $self->mocks->{$modulo};
+      my $metodo = $args->[1];
+      my $retorno = $args->[2];
+      if(not $mock){
+        $mock = MockObjectX->new();
+        $self->mocks->{$modulo} = $mock;
+      }
+      my $llamado = MockManager::Llamado->new([$mock, $metodo, $retorno]);
+      push @{$self->{llamados}}, $llamado;
+      warn Dumper $self;
+      $self->mocks->{$modulo}->metodo1;
     }
   }
 }
