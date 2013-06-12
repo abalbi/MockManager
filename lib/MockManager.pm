@@ -1,6 +1,7 @@
 package MockManager;
 use Data::Dumper;
 use MockObjectX;
+use TinyMockerX;
 use MockManager::Llamado;
 
 our $instancia = MockManager->new;
@@ -37,9 +38,13 @@ sub agregar {
   shift;
   my (@llamados) = @_;
   foreach my $args (@llamados) {
-    my $llamado = MockManager::Llamado->new(@{$args});
-    push @{$self->{llamados}}, $llamado;
-    $self->registrar_mock($llamado->mock);
+    if(ref($args->[0])) {
+      my $llamado = MockManager::Llamado->new(@{$args});
+      push @{$self->{llamados}}, $llamado;
+      $self->registrar_mock($llamado->mock);
+    } else {
+      
+    }
   }
 }
 

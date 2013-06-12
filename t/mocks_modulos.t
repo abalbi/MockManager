@@ -20,6 +20,11 @@ sub before : Test(setup) {
 #Y r es igual a 'retorno1'
 
 sub agregar_llamado_estatico : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  $mm->agregar(['Modulo','metodo1','retorno1']);
+  my $r = Modulo->metodo1;
+  is($r, 'retorno1');
 }
 
 1;
