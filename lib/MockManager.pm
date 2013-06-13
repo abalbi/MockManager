@@ -50,11 +50,17 @@ sub agregar {
       if(not $mock){
         $mock = MockObjectX->new();
         $self->mocks->{$modulo} = $mock;
+        delete $self->mocks->{"$mock"};
       }
-      my $llamado = MockManager::Llamado->new([$mock, $metodo, $retorno]);
+      my $llamado = MockManager::Llamado->new($mock, $metodo, $retorno);
       push @{$self->{llamados}}, $llamado;
-      warn Dumper $self;
-      $self->mocks->{$modulo}->metodo1;
+      eval {
+        *{"$modulo\:\:$metodo"} = sub {
+          my $self = $MockManager::instancia;
+          my $modulo = shift;
+          return $self->mocks->{$modulo}->$metodo;
+        };
+      }
     }
   }
 }
@@ -77,6 +83,7 @@ sub construido {
 }
 
 sub construir_fixture {
+  warn "construir_fixture";
   my $self = $MockManager::instancia;
   return if $self->construido;
   foreach my $mock (values %{$self->mocks}) {
