@@ -11,4 +11,5 @@ if(scalar @files == 0) {
     push @files, 't/'.$_;
   }
 }
+$Test::Harness::verbose = 1;
 runtests(@files);

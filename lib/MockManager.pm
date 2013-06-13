@@ -1,17 +1,13 @@
 package MockManager;
+use strict;
 use Data::Dumper;
 use MockObjectX;
-use TinyMockerX;
 use MockManager::Llamado;
 
 our $instancia = MockManager->new;
 
 sub instancia {
   return $MockManager::instancia;
-}
-
-sub limpiar {
-  $MockManager::instancia = MockManager->new;
 }
 
 sub new {
@@ -23,14 +19,8 @@ sub new {
   },'MockManager');
 }
 
-sub registrar_mock {
-  my $self = $MockManager::instancia;
-  shift;
-  my $mock = shift;
-  if(ref($self->{mocks}) ne 'HASH') {
-    $self->{mocks} = {};
-  }
-  $self->{mocks}->{$mock} = $mock;
+sub limpiar {
+  $MockManager::instancia = MockManager->new;
 }
 
 sub agregar {
@@ -38,31 +28,51 @@ sub agregar {
   shift;
   my (@llamados) = @_;
   foreach my $args (@llamados) {
-    if(ref($args->[0])) {
-      my $llamado = MockManager::Llamado->new(@{$args});
-      push @{$self->{llamados}}, $llamado;
-      $self->registrar_mock($llamado->mock);
+    my $mock = $args->[0];
+    my $metodo = $args->[1];
+    my $retorno = $args->[2];
+    if(ref($mock)) {
+      $self->registrar_mock($mock);
     } else {
-      my $modulo = $args->[0];
-      my $mock = $self->mocks->{$modulo};
-      my $metodo = $args->[1];
-      my $retorno = $args->[2];
+      my $modulo = $mock;
+      $mock = $self->mocks->{$modulo};
       if(not $mock){
-        $mock = MockObjectX->new();
-        $self->mocks->{$modulo} = $mock;
-        delete $self->mocks->{"$mock"};
+        $mock = $self->registrar_mock($modulo);
       }
-      my $llamado = MockManager::Llamado->new($mock, $metodo, $retorno);
-      push @{$self->{llamados}}, $llamado;
       eval {
+        no strict 'refs';
+        no warnings 'redefine', 'prototype';
         *{"$modulo\:\:$metodo"} = sub {
           my $self = $MockManager::instancia;
           my $modulo = shift;
           return $self->mocks->{$modulo}->$metodo;
         };
-      }
+      };
     }
+    my $llamado = MockManager::Llamado->new($mock, $metodo, $retorno);
+    push @{$self->llamados}, $llamado;
   }
+}
+
+sub mocks {
+  my $self = $MockManager::instancia;
+  if(ref($self->{mocks}) ne 'HASH') {
+    $self->{mocks} = {};
+  }
+  return $self->{mocks};
+}
+
+sub registrar_mock {
+  my $self = $MockManager::instancia;
+  shift;
+  my $mock = shift;
+  my $key = "$mock";
+  if(not ref($mock)) {
+    $mock = MockObjectX->new();
+    delete $self->mocks->{$mock};
+  }
+  $self->mocks->{$key} = $mock;
+  return $mock;
 }
 
 sub llamados {
@@ -70,10 +80,7 @@ sub llamados {
   return $self->{llamados};
 }
 
-sub mocks {
-  my $self = $MockManager::instancia;
-  return $self->{mocks};
-}
+
 
 sub construido {
   my $self = shift;
@@ -83,7 +90,6 @@ sub construido {
 }
 
 sub construir_fixture {
-  warn "construir_fixture";
   my $self = $MockManager::instancia;
   return if $self->construido;
   foreach my $mock (values %{$self->mocks}) {
@@ -118,4 +124,6 @@ sub terminar {
   my $self = $MockManager::instancia;
   die "No se realizaron todas las ejecuciones esperadas" if $self->{cuenta} != scalar @{$self->llamados};
 }
+
+
 1;
