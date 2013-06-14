@@ -117,10 +117,22 @@ sub validar_llamada {
   my $mock = shift;
   my $metodo = shift;
   my $retorno = shift;
+  my (@params) = @_;
   my $llamado = $self->llamados->[$self->{cuenta}];
   if (not ($llamado->mock eq $mock)) {
     die "Se esperaba el llamado de ".$llamado->mock." -> ".$llamado->metodo." : '".$llamado->retorno."'"; 
   }
+  if(scalar(@params) > 0 && scalar {$llamado->params} == 0 ) {
+    die "No se esperaban parametros";
+  }
+#  my @msg;
+#  my $c = 1;
+#  foreach my $param (@params) {
+#    if($param ne $llamado->params->[0]) {
+#      push @msg, ""
+#    }
+#    $c++;
+#  }
   $self->{cuenta}++;
 }
 

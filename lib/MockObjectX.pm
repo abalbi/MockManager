@@ -235,7 +235,7 @@ sub dispatch_mocked_method
     {
         $self->log_call( $sub, @_ );
         my $return = &{ $subs->{$sub} };
-        MockManager->validar_llamada($self,$sub,$return);
+        MockManager->validar_llamada($self,$sub,$return,@_);
         return $return;
     }
     else
