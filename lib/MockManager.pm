@@ -40,9 +40,13 @@ sub agregar {
         $mock = $self->registrar_mock($modulo);
       }
       eval {
+        my $estatico = $metodo;
+        if($metodo eq '__new__') {
+          $estatico = 'new';
+        }
         no strict 'refs';
         no warnings 'redefine', 'prototype';
-        *{"$modulo\:\:$metodo"} = sub {
+        *{"$modulo\:\:$estatico"} = sub {
           my $self = $MockManager::instancia;
           my $modulo = shift;
           return $self->mocks->{$modulo}->$metodo;

@@ -38,7 +38,7 @@ sub emular_constructor : Test(1) {
   my $self = shift;
   my $mm = MockManager->instancia;
   my $m = MockObjectX->new();
-  $mm->agregar(['Modulo','new',$m]);
+  $mm->agregar(['Modulo','__new__',$m]);
   my $o = Modulo->new;
   is($m,$o);
 }
