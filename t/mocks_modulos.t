@@ -27,5 +27,20 @@ sub agregar_llamado_estatico : Test(1) {
   is($r, 'retorno1');
 }
 
+#DADO que mm es una instancia de MockManager
+#Y m es un MockObjectX
+#CUANDO ejecuto mm->agregar(['Modulo', 'new',m])
+#Y o = Modulo->new
+#ENTONCES no recibo ningún error
+#Y o es igual a m
+
+sub emular_constructor : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m = MockObjectX->new();
+  $mm->agregar(['Modulo','new',$m]);
+  my $o = Modulo->new;
+  is($m,$o);
+}
 1;
 __PACKAGE__->new->runtests
