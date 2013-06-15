@@ -85,8 +85,6 @@ sub llamados {
   return $self->{llamados};
 }
 
-
-
 sub construido {
   my $self = shift;
   my $boo = shift;
@@ -126,6 +124,9 @@ sub validar_llamada {
   }
   if(scalar(@params) > 0 && scalar @{$llamado->params} == 0 ) {
     die "No se esperaban parametros";
+  }
+  if(scalar(@params) == 0 && scalar @{$llamado->params} > 0 ) {
+    die "Se esperaban parametros";
   }
   my @msg;
   my $c = 1;
