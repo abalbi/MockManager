@@ -7,6 +7,7 @@ sub new {
   die "No se puede crear un MockManager::Llamado sin un MockObjectX definido" if not $self->{mock};
   $self->{metodo} = shift;
   $self->{retorno} = shift;
+  $self->{params} = [@_];
   $self->{ejecutado} = 0;
   return $self;
 }
@@ -31,5 +32,10 @@ sub metodo {
 sub retorno {
   my $self = shift;
   return $self->{retorno};
+}
+
+sub params {
+  my $self = shift;
+  return $self->{params};
 }
 1;

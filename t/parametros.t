@@ -23,8 +23,7 @@ sub mas_esperados_que_realizados : Test(1) {
   my $mm = MockManager->instancia;
   my $m1 = MockObjectX->new();
   $mm->agregar([$m1,'metodo1','retorno1']);
-  $m1->metodo1('param1');
-  throws_ok {$mm->terminar} qr/No se esperaban parametros/;
+  throws_ok {$m1->metodo1('param1')} qr/No se esperaban parametros/;
 }
 1;
 __PACKAGE__->new->runtests

@@ -122,7 +122,8 @@ sub validar_llamada {
   if (not ($llamado->mock eq $mock)) {
     die "Se esperaba el llamado de ".$llamado->mock." -> ".$llamado->metodo." : '".$llamado->retorno."'"; 
   }
-  if(scalar(@params) > 0 && scalar {$llamado->params} == 0 ) {
+  shift @params if $params[0]->isa('MockObjectX');
+  if(scalar(@params) > 0 && scalar @{$llamado->params} == 0 ) {
     die "No se esperaban parametros";
   }
 #  my @msg;
