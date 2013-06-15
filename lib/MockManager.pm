@@ -28,9 +28,10 @@ sub agregar {
   shift;
   my (@llamados) = @_;
   foreach my $args (@llamados) {
-    my $mock = $args->[0];
-    my $metodo = $args->[1];
-    my $retorno = $args->[2];
+    my $mock = shift @{$args};
+    my $metodo = shift @{$args};
+    my $retorno = shift @{$args};
+    my @params = (@{$args});
     if(ref($mock)) {
       $self->registrar_mock($mock);
     } else {
@@ -53,7 +54,7 @@ sub agregar {
         };
       };
     }
-    my $llamado = MockManager::Llamado->new($mock, $metodo, $retorno);
+    my $llamado = MockManager::Llamado->new($mock, $metodo, $retorno, @params);
     push @{$self->llamados}, $llamado;
   }
 }
@@ -119,21 +120,22 @@ sub validar_llamada {
   my $retorno = shift;
   my (@params) = @_;
   my $llamado = $self->llamados->[$self->{cuenta}];
+  shift @params if $params[0]->isa('MockObjectX');
   if (not ($llamado->mock eq $mock)) {
     die "Se esperaba el llamado de ".$llamado->mock." -> ".$llamado->metodo." : '".$llamado->retorno."'"; 
   }
-  shift @params if $params[0]->isa('MockObjectX');
   if(scalar(@params) > 0 && scalar @{$llamado->params} == 0 ) {
     die "No se esperaban parametros";
   }
-#  my @msg;
-#  my $c = 1;
-#  foreach my $param (@params) {
-#    if($param ne $llamado->params->[0]) {
-#      push @msg, ""
-#    }
-#    $c++;
-#  }
+  my @msg;
+  my $c = 1;
+  foreach my $param (@params) {
+    if($param ne $llamado->params->[$c-1]) {
+      push @msg, "parametro $c: Se esperaba '".$llamado->params->[$c-1]."' y se recibio '$param'";
+    }
+    $c++;
+  }
+  die join("\n", @msg) if scalar @msg;
   $self->{cuenta}++;
 }
 
