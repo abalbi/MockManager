@@ -1,5 +1,10 @@
 use Test::Harness;
 use Data::Dumper;
+
+
+
+$Test::Harness::verbose = 1;
+
 opendir(my $dh, 't') || die "can't opendir $some_dir: $!";
 @dots = readdir($dh);
 closedir $dh;
@@ -11,5 +16,4 @@ if(scalar @files == 0) {
     push @files, 't/'.$_;
   }
 }
-$Test::Harness::verbose = 1;
 runtests(@files);

@@ -27,7 +27,11 @@ sub new
     $type = $etiqueta if ref($etiqueta);
     $type ||= {};
     my $self = bless $type, $class;
+<<<<<<< HEAD
     MockManager->registrar_mock($self,$etiqueta);
+=======
+    MockManager->registrar_mock($self, $etiqueta);
+>>>>>>> 015a7d999df52bf73d587a7597d78af076fda3fa
     return $self;
 }
 
