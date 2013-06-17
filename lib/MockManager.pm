@@ -146,8 +146,10 @@ sub validar_llamada {
   }
   my $c = 1;
   foreach my $param (@params) {
-    if($param ne $llamado->params->[$c-1]) {
-      push @msg, "parametro $c: Se esperaba '".$llamado->params->[$c-1]."' y se recibio '$param'";
+    if(exists $llamado->params->[$c-1]) {
+      if($param ne $llamado->params->[$c-1]) {
+        push @msg, "parametro $c: Se esperaba '".$llamado->params->[$c-1]."' y se recibio '$param'";
+      }
     }
     $c++;
   }

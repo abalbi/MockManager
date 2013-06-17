@@ -128,8 +128,7 @@ sub llamados_en_orden : Test(1) {
   my $mm = MockManager->instancia;
   my $m1 = MockObjectX->new('m1');
   $mm->agregar([$m1,'metodo1','retorno1'], [$m1,'metodo2','retorno2']);
-  $m1->metodo2;
-  throws_ok {$m1->metodo2} qr/Se esperaba el llamado de .+ -> metodo1 : 'retorno1'/;
+  throws_ok {$m1->metodo2} qr/Se esperaba el llamado de m1 -> metodo1 : 'retorno1'/;
 }
 
 # DADO que mm es una instancia de MockManager
