@@ -118,6 +118,21 @@ sub llamados_en_orden : Test(1) {
 }
 
 # DADO que mm es una instancia de MockManager
+#  Y m1 es una instancia de MockObjectX
+#  Y mm->agregar([m1, 'metodo1','retorno1'],[m1, 'metodo2','retorno2'])
+# CUANDO r = m1->metodo2
+# ENTONCES recibo un error "Se esperaba el llamado de m1->metodo1 : 'retorno1'
+
+sub llamados_en_orden : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m1 = MockObjectX->new('m1');
+  $mm->agregar([$m1,'metodo1','retorno1'], [$m1,'metodo2','retorno2']);
+  $m1->metodo2;
+  throws_ok {$m1->metodo2} qr/Se esperaba el llamado de .+ -> metodo1 : 'retorno1'/;
+}
+
+# DADO que mm es una instancia de MockManager
 # CUANDO m = MockObjectX->new
 # ENTONCES mm->mocks->[0] es igual m
 

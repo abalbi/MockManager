@@ -95,10 +95,12 @@ sub construido {
 sub construir_fixture {
   my $self = $MockManager::instancia;
   return if $self->construido;
-  foreach my $mock (values %{$self->mocks}) {
+  foreach my $key (keys %{$self->mocks}) {
+    my $mock = $self->mocks->{$key};
     my %reg_temp;
     foreach my $llamado (@{$self->llamados}) {
       if($mock eq $llamado->mock) {
+        $llamado->etiqueta($key);
         $reg_temp{$llamado->metodo} = [] if not $reg_temp{$llamado->metodo};
         push @{$reg_temp{$llamado->metodo}}, $llamado->retorno;
       }
@@ -119,16 +121,19 @@ sub validar_llamada {
   my (@params) = @_;
   my $llamado = $self->llamados->[$self->{cuenta}];
   shift @params if $params[0]->isa('MockObjectX');
+  my @msg;
   if (not ($llamado->mock eq $mock)) {
-    die "Se esperaba el llamado de ".$llamado->mock." -> ".$llamado->metodo." : '".$llamado->retorno."'"; 
+    push @msg, "Se esperaba el llamado de ".$llamado->etiqueta." -> ".$llamado->metodo." : '".$llamado->retorno."'"; 
+  }
+  if (not ($llamado->metodo eq $metodo)) {
+    push @msg, "Se esperaba el llamado de ".$llamado->etiqueta." -> ".$llamado->metodo." : '".$llamado->retorno."'"; 
   }
   if(scalar(@params) > 0 && scalar @{$llamado->params} == 0 ) {
-    die "No se esperaban parametros";
+    push @msg, "No se esperaban parametros";
   }
   if(scalar(@params) == 0 && scalar @{$llamado->params} > 0 ) {
-    die "Se esperaban parametros";
+    push @msg, "Se esperaban parametros";
   }
-  my @msg;
   my $c = 1;
   foreach my $param (@params) {
     if($param ne $llamado->params->[$c-1]) {

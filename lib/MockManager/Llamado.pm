@@ -19,6 +19,14 @@ sub ejecutado {
   return $self->{ejecutado};
 }
 
+sub etiqueta {
+  my $self = shift;
+  my $valor = shift;
+  $self->{etiqueta} = $valor if defined $valor;
+  return $self->{etiqueta};
+}
+
+
 sub mock {
   my $self = shift;
   return $self->{mock};
