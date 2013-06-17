@@ -35,24 +35,25 @@ sub agregar {
     if(ref($mock)) {
       $self->registrar_mock($mock);
     } else {
-      my $modulo = $mock;
-      $mock = $self->mocks->{$modulo};
+      my $key = $mock;
+      $mock = $self->mocks->{$key};
       if(not $mock){
+        my $modulo = $key;
         $mock = $self->registrar_mock($modulo);
-      }
-      eval {
-        my $estatico = $metodo;
-        if($metodo eq '__new__') {
-          $estatico = 'new';
-        }
-        no strict 'refs';
-        no warnings 'redefine', 'prototype';
-        *{"$modulo\:\:$estatico"} = sub {
-          my $self = $MockManager::instancia;
-          my $modulo = shift;
-          return $self->mocks->{$modulo}->$metodo;
+        eval {
+          my $estatico = $metodo;
+          if($metodo eq '__new__') {
+            $estatico = 'new';
+          }
+          no strict 'refs';
+          no warnings 'redefine', 'prototype';
+          *{"$modulo\:\:$estatico"} = sub {
+            my $self = $MockManager::instancia;
+            my $modulo = shift;
+            return $self->mocks->{$modulo}->$metodo;
+          };
         };
-      };
+      }
     }
     my $llamado = MockManager::Llamado->new($mock, $metodo, $retorno, @params);
     push @{$self->llamados}, $llamado;
@@ -67,11 +68,20 @@ sub mocks {
   return $self->{mocks};
 }
 
+sub etiqueta {
+  my $self = $MockManager::instancia;
+  shift;
+  my $mock = shift;
+  my $key = shift;
+  $self->registrar_mock($mock,$key);
+}
+
 sub registrar_mock {
   my $self = $MockManager::instancia;
   shift;
   my $mock = shift;
-  my $key = "$mock";
+  my $key = shift;
+  $key = "$mock" if not $key;
   if(not ref($mock)) {
     $mock = MockObjectX->new();
     delete $self->mocks->{$mock};
