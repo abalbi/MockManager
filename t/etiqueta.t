@@ -29,5 +29,20 @@ sub etiqueta_desde_manager : Test(1) {
   is($r,'retorno1');
 }
 
+#DADO que mm es una instancia de MockManager
+#CUANDO ejecuto m = MockObjectX->new('objeto1')
+#Y ejecuto mm->agregar(['objeto1', 'metodo1','retorno1'])
+#Y r = m->metodo1
+#ENTONCES r = 'retorno1'
+
+sub etiqueta_desde_new_mockobjectx : Test(1) {
+  my $self = shift;
+  my $mm = MockManager->instancia;
+  my $m1 = MockObjectX->new('objeto1');
+  $mm->agregar(['objeto1','metodo1','retorno1']);
+  my $r = $m1->metodo1();
+  is($r,'retorno1');
+}
+
 1;
 __PACKAGE__->new->runtests

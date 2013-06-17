@@ -23,10 +23,11 @@ my (%calls, %subs);
 
 sub new
 {
-    my ($class, $type) = @_;
+    my ($class, $etiqueta, $type) = @_;
+    $type = $etiqueta if ref($etiqueta);
     $type ||= {};
     my $self = bless $type, $class;
-    MockManager->registrar_mock($self);
+    MockManager->registrar_mock($self, $etiqueta);
     return $self;
 }
 
